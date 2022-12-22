@@ -12,6 +12,7 @@ interface UserUsecase {
     password: string,
     confirmPassword: string
   ) => Promise<DataMetaResponse<User, TokenSet>>;
+  loginWithGoogle: (token: string) => Promise<DataMetaResponse<User, TokenSet>>;
   validateUsername: (username: string) => Promise<void>;
   validateName: (name: string) => Promise<void>;
   validateEmail: (email: string) => Promise<void>;
@@ -92,6 +93,12 @@ class RealUserUsecase implements UserUsecase {
     }
 
     const resp = await this.userRepo.register(name, username, email, password);
+
+    return resp;
+  }
+
+  async loginWithGoogle(token: string) {
+    const resp = await this.userRepo.loginWithGoogle(token);
 
     return resp;
   }

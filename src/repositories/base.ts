@@ -7,7 +7,6 @@ export const serializeResponse =
   (response: Response) => {
     if (!_.inRange(response.status, 200, 300)) {
       return response.text().then((text) => {
-        // TODO more error handling
         switch (response.status) {
           case 403:
             throw NotLoggedInError;
@@ -38,6 +37,33 @@ export const serializeResponse =
           ) as T
       );
   };
+
+export const noContentResponse = () => (response: Response) => {
+  if (response.status !== 204) {
+    return response.text().then((text) => {
+      switch (response.status) {
+        case 403:
+          throw NotLoggedInError;
+        default: {
+          const errorResponse = deepMapKeys(
+            JSON.parse(idReviver(text)),
+            (v, k) => _.camelCase(k)
+          ) as ErrorResponse;
+
+          if (errorResponse.errors) {
+            throw errorResponse;
+          } else {
+            throw new Error(
+              `Request rejected with status ${response.status} and message ${text}`
+            );
+          }
+        }
+      }
+    });
+  }
+
+  return response;
+};
 
 const deepMapKeys = <T>(obj: T, fn: _.ObjectIterator<any, any>): any => {
   if (_.isArray(obj)) {

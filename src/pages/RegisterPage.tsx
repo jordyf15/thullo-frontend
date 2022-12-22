@@ -1,6 +1,11 @@
 import { GitHub, Google } from "@mui/icons-material";
 import { Box, Link, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
+import {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+  useGoogleLogin,
+} from "react-google-login";
 import { Navigate, useNavigate } from "react-router-dom";
 import appLogo from "../assets/images/logo.png";
 import InputField from "../components/InputField";
@@ -200,6 +205,42 @@ const RegisterPage = () => {
       });
   };
 
+  const onGoogleLoginSuccess = (
+    googleResponse: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    setRegisterStatus("loading");
+
+    const googleResp = googleResponse as GoogleLoginResponse;
+
+    dependencies.usecases.user
+      .loginWithGoogle(googleResp.tokenId)
+      .then((response) => {
+        setRegisterStatus("registered");
+        dispatch(
+          setLoginState({
+            user: response.data,
+            tokenSet: response.meta,
+          })
+        );
+        navigate("/");
+      })
+      .catch((err) => {
+        setRegisterStatus("not_registered");
+        console.log(err);
+      });
+  };
+
+  const onGoogleLoginFailure = (error: any) => {
+    console.log(error);
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: onGoogleLoginSuccess,
+    onFailure: onGoogleLoginFailure,
+    clientId: process.env.REACT_APP_GOOGLE_SIGNIN_CLIENT_ID as string,
+    isSignedIn: false,
+  });
+
   return (
     <Stack minHeight="100vh" bgcolor="#F8F9FD">
       {user.tokenSet && <Navigate to="/" />}
@@ -293,7 +334,10 @@ const RegisterPage = () => {
             or continue with these accounts
           </Typography>
           <Stack direction="row" justifyContent="center" spacing={2.5}>
-            <OAuthButton>
+            <OAuthButton
+              onClick={() => googleLogin.signIn()}
+              disabled={registerStatus === "loading"}
+            >
               <Google />
             </OAuthButton>
             <OAuthButton>
