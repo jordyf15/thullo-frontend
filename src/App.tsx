@@ -4,6 +4,7 @@ import { Navigate, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import { NotLoggedInError, TokenSetNotFoundError } from "./error";
 import { useAppSelector } from "./hooks";
+import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
 const theme = createTheme({
@@ -37,7 +38,7 @@ const App = () => {
     return <></>;
   }
 
-  const whitelistedPaths = ["/register"];
+  const whitelistedPaths = ["/register", "/login"];
 
   if (isLoggedOut && !whitelistedPaths.includes(location.pathname)) {
     return <Navigate to="/login" replace />;
@@ -48,6 +49,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <Routes>
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </ThemeProvider>
     </Box>

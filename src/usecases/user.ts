@@ -12,6 +12,10 @@ interface UserUsecase {
     password: string,
     confirmPassword: string
   ) => Promise<DataMetaResponse<User, TokenSet>>;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<DataMetaResponse<User, TokenSet>>;
   loginWithGoogle: (token: string) => Promise<DataMetaResponse<User, TokenSet>>;
   validateUsername: (username: string) => Promise<void>;
   validateName: (name: string) => Promise<void>;
@@ -21,6 +25,8 @@ interface UserUsecase {
     password: string,
     confirmPassword: string
   ) => Promise<void>;
+  checkEmptyEmail: (email: string) => Promise<void>;
+  checkEmptyPassword: (password: string) => Promise<void>;
 }
 
 export enum UserError {
@@ -40,6 +46,8 @@ export enum UserError {
   PasswordNotContainNumericalChar = "password_not_contain_numerical_char",
   PasswordNotContainSpecialChar = "password_not_contain_special_char",
   ConfirmPasswordNotMatch = "confirm_password_not_match",
+  EmailEmpty = "email_empty",
+  PasswordEmpty = "password_empty",
 }
 
 class RealUserUsecase implements UserUsecase {
@@ -93,6 +101,28 @@ class RealUserUsecase implements UserUsecase {
     }
 
     const resp = await this.userRepo.register(name, username, email, password);
+
+    return resp;
+  }
+
+  async login(email: string, password: string) {
+    const errors: UserError[] = [];
+
+    try {
+      await this.checkEmptyEmail(email);
+    } catch (error) {
+      errors.push(error as UserError);
+    }
+
+    try {
+      await this.checkEmptyPassword(password);
+    } catch (error) {
+      errors.push(error as UserError);
+    }
+
+    if (errors.length > 0) throw errors;
+
+    const resp = await this.userRepo.login(email, password);
 
     return resp;
   }
@@ -182,6 +212,14 @@ class RealUserUsecase implements UserUsecase {
     if (password !== confirmPassword) {
       throw UserError.ConfirmPasswordNotMatch;
     }
+  }
+
+  async checkEmptyEmail(email: string) {
+    if (email.length <= 0) throw UserError.EmailEmpty;
+  }
+
+  async checkEmptyPassword(password: string) {
+    if (password.length <= 0) throw UserError.PasswordEmpty;
   }
 }
 

@@ -8,6 +8,7 @@ import {
 } from "react-google-login";
 import { Navigate, useNavigate } from "react-router-dom";
 import appLogo from "../assets/images/logo.png";
+import Footer from "../components/Footer";
 import InputField from "../components/InputField";
 import OAuthButton from "../components/OAuthButton";
 import ThemedButton from "../components/ThemedButton";
@@ -358,6 +359,7 @@ const RegisterPage = () => {
                   textDecoration: "none",
                 }}
                 fontFamily="inherit"
+                href="/login"
               >
                 Login
               </Link>
@@ -365,16 +367,7 @@ const RegisterPage = () => {
           </Typography>
         </Stack>
       </Stack>
-      <Typography
-        fontWeight={600}
-        fontSize="14px"
-        lineHeight="17px"
-        color="#BDBDBD"
-        textAlign="center"
-        py={3}
-      >
-        <>&#169; {new Date().getFullYear()} Jordy Ferdian, devchallenges.io</>
-      </Typography>
+      <Footer />
     </Stack>
   );
 };

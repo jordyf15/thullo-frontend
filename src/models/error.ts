@@ -8,6 +8,10 @@ interface Error {
 }
 
 export enum ErrorCode {
+  // general errors
+  // RecordNotFound Error returned when the searched data is not found
+  RecordNotFound = 103,
+
   // user errors
   // CurrentPasswordWrong Error returned when the inputted password does not match the current password
   CurrentPasswordWrong = 201,
