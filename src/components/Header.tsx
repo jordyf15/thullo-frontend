@@ -19,7 +19,7 @@ const Header = () => {
       >
         <Stack direction="row" alignItems="center" spacing={1.5}>
           <Box component="img" width="30px" src={appLogo} />
-          <Typography fontSize="18px" fontWeight={600}>
+          <Typography color="#333333" fontSize="18px" fontWeight={600}>
             Thullo
           </Typography>
         </Stack>
@@ -33,6 +33,7 @@ const Header = () => {
           <Typography
             fontFamily={["Noto Sans", "sans-serif"].join(",")}
             fontWeight={700}
+            color="#333333"
           >
             {user.username}
           </Typography>
