@@ -2,6 +2,57 @@ import _ from "lodash";
 import { NotLoggedInError } from "../error";
 import ErrorResponse from "../models/error";
 
+interface FetchParams {
+  method: string;
+  path: string;
+  body?: BodyInit;
+}
+
+export const combinedWithQueries = (url: string, queries: {}) => {
+  if (_.isEmpty(queries)) {
+    return url;
+  } else {
+    const sanitizedQueries = _.omitBy(queries, _.isNil);
+    return `${url}?` + new URLSearchParams(sanitizedQueries);
+  }
+};
+
+export const fetchService = (
+  accessToken: string,
+  { method, path, body }: FetchParams,
+  queries?: URLSearchParams,
+  options: { signal?: AbortSignal } | { timeout: number } = { timeout: 30000 }
+) => {
+  let input: RequestInfo;
+  if (queries) {
+    input = `${process.env.REACT_APP_API_URL}/${path}?` + queries;
+  } else {
+    input = `${process.env.REACT_APP_API_URL}/${path}`;
+  }
+
+  let abortSignal: AbortSignal | undefined;
+  let abortTimeout: NodeJS.Timeout;
+  const signalOpts = options as { signal?: AbortSignal };
+
+  abortSignal = signalOpts.signal;
+  const timeoutOpts = options as { timeout: number };
+  const abortController = new AbortController();
+
+  abortTimeout = setTimeout(() => abortController.abort(), timeoutOpts.timeout);
+
+  return fetch(input, {
+    method: method,
+    body: body,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    signal: abortSignal,
+  }).then((resp) => {
+    clearTimeout(abortTimeout);
+    return resp;
+  });
+};
+
 export const serializeResponse =
   <T>() =>
   (response: Response) => {

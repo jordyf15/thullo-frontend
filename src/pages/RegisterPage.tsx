@@ -323,7 +323,11 @@ const RegisterPage = () => {
             isPasswordField
             disabled={registerStatus === "loading"}
           />
-          <ThemedButton type="submit" disabled={registerStatus === "loading"}>
+          <ThemedButton
+            theme="primary"
+            type="submit"
+            disabled={registerStatus === "loading"}
+          >
             Register
           </ThemedButton>
           <Typography

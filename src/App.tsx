@@ -4,6 +4,7 @@ import { Navigate, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import { NotLoggedInError, TokenSetNotFoundError } from "./error";
 import { useAppSelector } from "./hooks";
+import HomePage from "./pages/home_page/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
@@ -50,6 +51,7 @@ const App = () => {
         <Routes>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </ThemeProvider>
     </Box>

@@ -170,7 +170,11 @@ const LoginPage = () => {
             disabled={loginStatus === "loading"}
             isPasswordField
           />
-          <ThemedButton type="submit" disabled={loginStatus === "loading"}>
+          <ThemedButton
+            theme="primary"
+            type="submit"
+            disabled={loginStatus === "loading"}
+          >
             Log in
           </ThemedButton>
           <Typography
